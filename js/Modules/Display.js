@@ -1,15 +1,27 @@
 import Game from './Game.js';
 import {getGamesFromApi, gameDetailsFromAPI} from './API.js';
 
+let allGames = [];
+
 export async function displayGames(category){
     let games = await getGamesFromApi(category);
-    let allGames = games.map(el=>new Game(el));
+    allGames = games.map(el=>new Game(el))
     $('#games-container').html('');
-    allGames.forEach(el=>{
-        $('#games-container').append(el.gameCard())
-    })
+    let gen = paginateGames();
+    gen.next();
+    return gen;
 }
 
+function* paginateGames(){
+    $('#show-more-btn').removeClass('d-none')
+    for(let i = 0; i < allGames.length; i++){
+        $('#games-container').append(allGames[i].gameCard())
+        if( (i + 1) % 24 == 0 && (i + 1) != allGames.length){
+            yield;
+        }
+    }
+    $('#show-more-btn').addClass('d-none')
+}
 function displayGameDetail(id){
     $('#game-detail').show(0,function(){
         $('#loading').show(0, async function(){

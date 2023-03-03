@@ -4,8 +4,11 @@ $(function(){
     $('#loading').fadeOut();
 })
 
-
-displayGames();
+displayGames().then(res=>{
+    $('#show-more-btn').click(function(){
+        res.next();
+    })
+});
 
 $('nav .nav-item a').click(function(){
     let cat = this.dataset.cat;
